@@ -1,9 +1,11 @@
 import java.util.ArrayList;
 
 import javafx.application.Platform;
-import javafx.collections.ObservableList;
+import javafx.event.EventHandler;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
@@ -18,7 +20,20 @@ public class Snake {
 		this.gp = gp;
 		al = new ArrayList<Point2D>();
 		
-		direction = "EAST";
+		gp.setOnKeyPressed(new EventHandler<KeyEvent>() {
+
+			@Override
+			public void handle(KeyEvent event) {
+				if (event.getCode() == KeyCode.LEFT ||
+					event.getCode() == KeyCode.RIGHT ||
+					event.getCode() == KeyCode.UP ||
+					event.getCode() == KeyCode.DOWN)
+					direction = event.getCode().getName().toUpperCase();
+			}
+			
+		});
+		
+		direction = "RIGHT";
 		
 		for (int j=0;j<3;j++)
 			al.add(new Point2D(j, 0));
@@ -36,29 +51,36 @@ public class Snake {
 		int dx = 0, dy = 0;
 		
 		switch (direction) {
-		case "NORTH":
+		case "UP":
+			dy--;
 			break;
-		case "WEST":
+		case "LEFT":
+			dx--;
 			break;
-		case "SOUTH":
+		case "DOWN":
+			dy++;
 			break;
-		case "EAST":
-			for (int i=al.size();i>0;i--) {
-				Point2D loc = al.get(i-1);
-				loc = new Point2D(loc.getX() +1, loc.getY());
-				if (gp.isValid(loc)) {
-					al.set(i-1, loc);
-				} else {
-					break;
-				}
-			}
-			
-			drawSnake();
+		case "RIGHT":
+			dx++;
 			break;
 		}
+		
+		if (dx != 0 || dy != 0)
+			drawSnake(dx, dy);
 	}
 	
-	private void drawSnake() {
+	private void drawSnake(int... dd) {
+		
+		if (dd.length != 0)
+		for (int i=al.size();i>0;i--) {
+			Point2D loc = al.get(i-1);
+			loc = new Point2D(loc.getX() + dd[0], loc.getY() + dd[1]);
+			if (gp.isValid(loc)) {
+				al.set(i-1, loc);
+			} else {
+				break;
+			}
+		}
 		
 		Platform.runLater(new Runnable() {
 			

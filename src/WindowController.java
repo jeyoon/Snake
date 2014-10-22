@@ -80,7 +80,7 @@ public class WindowController extends StackPane {
 					gp.add(apple, x, y);
 				}
 				
-				if (((int) (now / 1e9)) > timeElapsed + 1) {
+				if (((int) (now / 1e9)) > timeElapsed + .5) {
 					snake.next();
 					timeElapsed = (int) (now / 1e9);
 				}

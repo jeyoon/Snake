@@ -1,7 +1,10 @@
 import java.util.HashMap;
 
+import javafx.event.EventHandler;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.GridPane;
 
 
@@ -12,6 +15,7 @@ public class World extends GridPane {
 	public World() {
 		super();
 		nodes = new HashMap<Point2D, Node>();
+		setFocusTraversable(true);
 	}	
 	
 	@Override
