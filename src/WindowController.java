@@ -1,19 +1,23 @@
 import javafx.animation.AnimationTimer;
 import javafx.geometry.HPos;
+import javafx.geometry.Point2D;
+import javafx.geometry.Pos;
 import javafx.geometry.VPos;
-import javafx.scene.layout.AnchorPane;
+import javafx.scene.Node;
 import javafx.scene.layout.ColumnConstraints;
-import javafx.scene.layout.GridPane;
 import javafx.scene.layout.RowConstraints;
+import javafx.scene.layout.StackPane;
+import javafx.scene.text.Text;
 
-public class WindowController extends AnchorPane {
+public class WindowController extends StackPane {
 	
-	private GridPane gp;
+	private World gp;
+	private static Snake snake;
 
 	public WindowController(int width, int height) {
 		super();
 		
-		gp = new GridPane();
+		gp = new World();
 		gp.setGridLinesVisible(true);
 		
 		if (width == height)
@@ -34,18 +38,54 @@ public class WindowController extends AnchorPane {
 			}
 		}
 		
-		new Snake(gp);
+		snake = new Snake(gp);
 		
-		System.out.println(gp.getChildren().size());
+		System.out.println("abcd " + gp.getChildren().size());
+		
+		Text ta = new Text("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+		
+		setAlignment(ta, Pos.CENTER);
+		
+		getChildren().add(ta);
+		getChildren().add(gp);
 		
 		new AnimationTimer() {
 			
+			private int timeElapsed = 0;
+			
 			@Override
 			public void handle(long now) {
+				
+				boolean hasApple = false;
+				
+				for (Node node : gp.getChildren())
+					if (node instanceof Apple)
+						hasApple = true;
+				
+				if (!hasApple) {
+					int x, y;
+					do {
+						
+					x = (int) (Math.random() * 8);
+					y = (int) (Math.random() * 8);
+					
+					} while (!gp.isOccupied(new Point2D(x, y)));
+					
+					Apple apple = new Apple();
+					
+					apple.setOnMouseEntered(event -> {
+						gp.getChildren().remove(apple);
+					});
+					
+					gp.add(apple, x, y);
+				}
+				
+				if (((int) (now / 1e9)) > timeElapsed + 1) {
+					snake.next();
+					timeElapsed = (int) (now / 1e9);
+				}
 			}
 			
 		}.start();
-		
-		getChildren().add(gp);
 	}
 }
